@@ -1,0 +1,50 @@
+/*
+Given a binary tree and an integer K. Find the number of paths in the tree which have their sum equal to K.
+A path may start from any node and end at any node in the downward direction.
+Since the answer may be very large, compute it modulo 109+7.
+*/
+
+#define mod (int)(1e9+7)
+class Solution{
+  public:
+    void sumK_util(Node *root, int sum, int cur, int &ans, unordered_map<int, int> &mp)
+    {
+        if(!root)
+            return;
+        
+        ans += mp[cur + root->data - sum];
+    
+        if(ans >= mod)
+            ans %= mod;
+            
+        if(cur + root->data == sum)
+            ans++;
+    
+        if(ans >= mod)
+            ans %= mod;
+            
+        mp[cur + root->data]++;
+    
+        if(mp[cur + root->data] >= mod)
+            mp[cur + root->data] %= mod;
+        
+        sumK_util(root->left, sum, cur+root->data, ans, mp);
+        sumK_util(root->right, sum, cur+root->data, ans, mp);
+        
+        mp[cur+root->data]--;
+    
+        if(mp[cur + root->data] <0)
+            mp[cur + root->data] += mod;
+    }
+    
+    int sumK(Node *root,int k)
+    {
+        int ans = 0;
+            
+        unordered_map<int, int> mp;
+            
+        sumK_util(root, k, 0, ans, mp);
+            
+        return ans;
+    }
+};
